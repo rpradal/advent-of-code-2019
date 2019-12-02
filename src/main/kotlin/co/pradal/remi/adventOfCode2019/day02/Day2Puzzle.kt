@@ -12,8 +12,8 @@ fun solvePuzzleStep2() = (0..99)
     .flatMap { noun -> (0..99).map { verb -> noun to verb } }
     .map { it to getParsedInput().replace(1, it.first).replace(2, it.second) }
     .map { it.first to processParsedInput(0, it.second) }
-    .first { it.second.first() == 19690720 }
-    .let { 100 * it.first.first + it.first.second }
+    .first { (_, memoryOutput) -> memoryOutput.first() == 19690720 }
+    .let { (nounVerbPair, _) -> 100 * nounVerbPair.first + nounVerbPair.second }
 
 fun processParsedInput(position: Int, input: List<Int>): List<Int> {
     return when (input[position].toToken()) {
