@@ -5,12 +5,27 @@ import kotlin.math.floor
 
 fun solveDay1PuzzleStep1() = preProcessInput()
     .asSequence()
-    .map { it / 3.toDouble() }
-    .map(::floor)
-    .map(Double::toInt)
-    .map { it - 2 }
+    .map(::computeFuelNeededByMass)
     .sum()
 
+fun solveDay1PuzzleStep2() = preProcessInput()
+    .asSequence()
+    .map(::computeModuleMass)
+    .sum()
+
+fun computeModuleMass(moduleMass: Int): Int {
+    val mass = computeFuelNeededByMass(moduleMass)
+    return when {
+        mass > 0 -> mass + computeModuleMass(mass)
+        else -> 0
+    }
+}
+
+fun computeFuelNeededByMass(mass: Int) = mass
+    .div(3.toDouble())
+    .let(::floor)
+    .toInt()
+    .minus(2)
 
 fun preProcessInput(): List<Int> {
     return massesInput.split('\n').map(String::toInt)
