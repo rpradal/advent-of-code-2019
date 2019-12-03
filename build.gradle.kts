@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     java
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.60"
 }
 
 group = "co.pradal.remi.adventOfCode2019"

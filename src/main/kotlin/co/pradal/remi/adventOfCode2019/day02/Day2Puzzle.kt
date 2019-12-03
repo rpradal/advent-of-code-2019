@@ -2,13 +2,13 @@ package co.pradal.remi.adventOfCode2019.day02
 
 import java.lang.IllegalStateException
 
-fun solvePuzzleStep1() = getParsedInput()
+fun solveDay2PuzzleStep1() = getParsedInput()
     .replace(1, 12)
     .replace(2, 2)
     .let { processParsedInput(0, it) }
     .first()
 
-fun solvePuzzleStep2() = (0..99)
+fun solveDay2PuzzleStep2() = (0..99)
     .flatMap { noun -> (0..99).map { verb -> noun to verb } }
     .map { it to getParsedInput().replace(1, it.first).replace(2, it.second) }
     .map { it.first to processParsedInput(0, it.second) }
