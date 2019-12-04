@@ -1,23 +1,78 @@
 package co.pradal.remi.adventOfCode2019.day03
 
-import java.lang.IllegalStateException
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 
 
 fun solveDay3Step1(input: String = inputString): Int {
     val (firstWire, secondWire) = getParsedInput(input).let { it.first.toSegment() to it.second.toSegment() }
 
+    return getIntersections(firstWire, secondWire)
+        .map { abs(it.x) + abs(it.y) }
+        .filter { it != 0 }
+        .min() ?: throw IllegalStateException()
+}
+
+
+fun solveDay3Step2(input: String = inputString): Int {
+    val (firstWire, secondWire) = getParsedInput(input).let { it.first.toSegment() to it.second.toSegment() }
+
+    return getIntersections(firstWire, secondWire)
+        .map { computeDistanceOnWire(it, firstWire) + computeDistanceOnWire(it, secondWire) }
+        .filter { it != 0 }
+        .sorted()
+        .first()
+}
+
+fun computeDistanceOnWire(intersection: Position, wire: List<Segment>): Int {
+    val distance = wire
+        .takeWhile { !isOnSegment(intersection, it) }
+        .map { distance(it) }
+        .sum()
+
+    val distanceOnSegmentIntersection = wire
+        .first { isOnSegment(intersection, it) }
+        .let { Segment(it.first, intersection) }
+        .let(::distance)
+
+    return distance + distanceOnSegmentIntersection
+}
+
+fun distance(segment: Segment): Int {
+    return ((segment.first.x - segment.second.x).toDouble().pow(2) + (segment.first.y - segment.second.y).toDouble().pow(
+        2
+    )).pow(0.5).toInt()
+}
+
+fun isOnSegment(position: Position, secondSegment: Segment): Boolean {
+    if (position.x == secondSegment.first.x && position.x == secondSegment.second.x && position.y in min(
+            secondSegment.first.y,
+            secondSegment.second.y
+        )..max(secondSegment.first.y, secondSegment.second.y)
+    ) {
+        return true
+    }
+
+    if (position.y == secondSegment.first.y && position.y == secondSegment.second.y && position.x in min(
+            secondSegment.first.x,
+            secondSegment.second.x
+        )..max(secondSegment.first.x, secondSegment.second.x)
+    ) {
+        return true
+    }
+
+    return false
+}
+
+fun getIntersections(firstWire: List<Segment>, secondWire: List<Segment>): List<Position> {
     return firstWire
         .flatMap { firstWireSegment -> secondWire.map { secondWireSegment -> firstWireSegment to secondWireSegment } }
         .asSequence()
         .filter { areSegmentsIntersect(it.first, it.second) }
         .map { computeIntersection(it.first, it.second) }
-        .map { abs(it.x) + abs(it.y) }
-        .filter { it != 0 }
-        .sorted()
-        .first()
+        .toList()
 }
 
 fun List<WireMoveToken>.toSegment(): List<Segment> {
@@ -42,8 +97,14 @@ fun areSegmentsIntersect(firstSegment: Segment, secondSegment: Segment): Boolean
     }
 
     val isIntersectionOnSegment =
-        verticalSegment.first.x in min(horizontalSegment.first.x, horizontalSegment.second.x)..max(horizontalSegment.first.x, horizontalSegment.second.x) &&
-                horizontalSegment.first.y in min(verticalSegment.first.y, verticalSegment.second.y)..max(verticalSegment.first.y, verticalSegment.second.y)
+        verticalSegment.first.x in min(
+            horizontalSegment.first.x,
+            horizontalSegment.second.x
+        )..max(horizontalSegment.first.x, horizontalSegment.second.x) &&
+                horizontalSegment.first.y in min(
+            verticalSegment.first.y,
+            verticalSegment.second.y
+        )..max(verticalSegment.first.y, verticalSegment.second.y)
 
     return areLineIntersect && isIntersectionOnSegment
 }
@@ -79,7 +140,8 @@ fun getWireFromString(inputWire: String): List<WireMoveToken> = inputWire
     .split(',')
     .map { WireMoveToken(direction = it[0].toToken(), measure = it.substring(1).toInt()) }
 
-private fun Char.toToken() = Direction.values().find { it.directionRepresentation == this } ?: throw IllegalStateException()
+private fun Char.toToken() =
+    Direction.values().find { it.directionRepresentation == this } ?: throw IllegalStateException()
 
 data class WireMoveToken(val direction: Direction, val measure: Int)
 
