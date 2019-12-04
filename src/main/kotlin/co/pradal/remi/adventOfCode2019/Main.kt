@@ -6,6 +6,8 @@ import co.pradal.remi.adventOfCode2019.day02.solveDay2PuzzleStep1
 import co.pradal.remi.adventOfCode2019.day02.solveDay2PuzzleStep2
 import co.pradal.remi.adventOfCode2019.day03.solveDay3Step1
 import co.pradal.remi.adventOfCode2019.day03.solveDay3Step2
+import co.pradal.remi.adventOfCode2019.day04.solveDay4Step1
+import co.pradal.remi.adventOfCode2019.day04.solveDay4Step2
 
 
 fun main() {
@@ -19,4 +21,7 @@ fun main() {
     println("Day 03")
     println("Step 1 result : ${solveDay3Step1()}")
     println("Step 2 result : ${solveDay3Step2()}")
+    println("Day 04")
+    println("Step 1 result : ${solveDay4Step1()}")
+    println("Step 2 result : ${solveDay4Step2()}")
 }
